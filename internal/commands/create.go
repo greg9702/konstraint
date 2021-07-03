@@ -106,11 +106,11 @@ func runCreateCommand(path string) error {
 			continue
 		}
 
-		// Skip Constraint generation if there are parameters on the template.
-		if len(violation.Parameters()) > 0 {
-			logger.Warn("skipping constraint generation due to use of parameters")
-			continue
-		}
+		// // Skip Constraint generation if there are parameters on the template.
+		// if len(violation.Parameters()) > 0 {
+		// 	logger.Warn("skipping constraint generation due to use of parameters")
+		// 	continue
+		// }
 
 		constraint, err := getConstraint(violation)
 		if err != nil {
@@ -242,6 +242,7 @@ func setKindMatcher(constraint *unstructured.Unstructured, kindMatchers []rego.K
 
 	for _, kindMatcher := range kindMatchers {
 		apiGroup := kindMatcher.APIGroup
+		// TODO why do we do this?
 		if kindMatcher.APIGroup == "core" {
 			apiGroup = ""
 		}
