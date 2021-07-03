@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: test
+  template:
+    metadata:
+      labels:
+        name: test
+    spec:
+      containers:
+      - name: git-sync
+        image: greg9702/git-sync:latest
+        volumeMounts:
+        - name: data
+          mountPath: /tmp/git
+        env:
+        - name: GIT_SYNC_REPO
+          value: https://github.com/kubernetes/git-sync.git
+        - name: GIT_SYNC_DEST
+          value: git-sync
+      - name: arch
+        image: archlinux:latest
+        command: ["/bin/bash", "-c", "--"]
+        args: ["while true; do sleep 30; done;"]
+        volumeMounts:
+        - name: data
+          mountPath: /src
+      volumes:
+      - name: data
+        emptyDir: {}

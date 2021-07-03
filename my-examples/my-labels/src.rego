@@ -1,11 +1,11 @@
-# @kinds apps/DaemonSet apps/Deployment apps/StatefulSet core/Pod
+# @kinds core/Namespace
+# @parameter labels array string
+package k8srequiredlabels
 
-package k8srequiredregistry
-violation[{"msg": msg, "details": {"Registry should be": required}}] {
-  input.review.object.kind == "Pod"
-  some i
-  image := input.review.object.spec.containers[i].image
-  required := input.object.registry
-  not startswith(image,required)
-  msg := sprintf("Forbidden registry: %v", [image])
+violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+  provided := {label | input.review.object.metadata.labels[label]}
+  required := {label | label := input.parameters.labels[_]}
+  missing := required - provided
+  count(missing) > 0
+  msg := sprintf("you must provide labels: %v", [missing])
 }
